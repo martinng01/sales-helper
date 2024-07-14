@@ -15,7 +15,7 @@ class TranscriptProcessor():
         self.previous_transcript = None
         self.repeat_count = 0
         self.sio = socketio.SimpleClient()
-        self.sio.connect('http://localhost:8765')
+        # self.sio.connect('http://localhost:8765')
         self.rag = RAG()
         self.silence_processed = False
 

@@ -121,26 +121,6 @@ class Client:
             self.last_response_received = time.time()
             self.last_received_segment = segments[-1]["text"]
 
-        # text output
-        with open('output.txt', 'a') as f:
-            for line in text:
-                f.write(line)
-            f.write('\n')
-
-        # full transcript (only gets updated at the end)
-        with open('transcript.txt', 'w') as f:
-            for line in self.transcript:
-                f.write(line['text'])
-                f.write('\n')
-
-        # Truncate to last 3 entries for brevity.
-        # text = text[-3:]
-        # utils.clear_screen()
-        # utils.print_transcript(text)
-        # print(text)
-        # print(self.transcript)
-        # if text:
-        #     self.transcript_processor.process_text(''.join(text))
         if self.transcript:
             self.transcript_processor.process_transcripts(self.transcript)
 
@@ -187,7 +167,8 @@ class Client:
             return
 
         if "segments" in message.keys():
-            self.process_segments(message["segments"])
+            print(message['segments'])
+            # self.process_segments(message["segments"])
 
     def on_error(self, ws, error):
         print(f"[ERROR] WebSocket Error: {error}")

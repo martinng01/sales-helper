@@ -16,7 +16,6 @@ function captureTabAudio() {
   });
 }
 
-
 /**
  * Sends a message to a specific tab in Google Chrome.
  * @param {number} tabId - The ID of the tab to send the message to.
@@ -30,7 +29,6 @@ function sendMessageToTab(tabId, data) {
     });
   });
 }
-
 
 /**
  * Resamples the audio data to a target sample rate of 16kHz.
@@ -59,7 +57,8 @@ function resampleTo16kHZ(audioData, origSampleRate = 44100) {
     const leftIndex = Math.floor(index).toFixed();
     const rightIndex = Math.ceil(index).toFixed();
     const fraction = index - leftIndex;
-    resampledData[i] = data[leftIndex] + (data[rightIndex] - data[leftIndex]) * fraction;
+    resampledData[i] =
+      data[leftIndex] + (data[rightIndex] - data[leftIndex]) * fraction;
   }
 
   // Return the resampled data
@@ -68,14 +67,16 @@ function resampleTo16kHZ(audioData, origSampleRate = 44100) {
 
 function generateUUID() {
   let dt = new Date().getTime();
-  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = (dt + Math.random() * 16) % 16 | 0;
-    dt = Math.floor(dt / 16);
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
+  const uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+    /[xy]/g,
+    function (c) {
+      const r = (dt + Math.random() * 16) % 16 | 0;
+      dt = Math.floor(dt / 16);
+      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+    }
+  );
   return uuid;
 }
-
 
 /**
  * Starts recording audio from the captured tab.
@@ -93,41 +94,43 @@ async function startRecord(option) {
     const socket = new WebSocket(`ws://${option.host}:${option.port}/`);
     let isServerReady = false;
     let language = option.language;
-    socket.onopen = function(e) { 
+    socket.onopen = function (e) {
       socket.send(
         JSON.stringify({
           uid: uuid,
           language: option.language,
           task: option.task,
           model: option.modelSize,
-          use_vad: option.useVad
+          use_vad: option.useVad,
         })
       );
     };
 
     socket.onmessage = async (event) => {
       const data = JSON.parse(event.data);
-      if (data["uid"] !== uuid)
-        return;
-      
-      if (data["status"] === "WAIT"){
+      if (data["uid"] !== uuid) return;
+
+      if (data["status"] === "WAIT") {
         await sendMessageToTab(option.currentTabId, {
           type: "showWaitPopup",
           data: data["message"],
         });
-        chrome.runtime.sendMessage({ action: "toggleCaptureButtons", data: false }) 
-        chrome.runtime.sendMessage({ action: "stopCapture" })
+        chrome.runtime.sendMessage({
+          action: "toggleCaptureButtons",
+          data: false,
+        });
+        chrome.runtime.sendMessage({ action: "stopCapture" });
         return;
       }
-        
-      if (isServerReady === false){
+
+      if (isServerReady === false) {
         isServerReady = true;
         return;
       }
-      
+
       if (language === null) {
         language = data["language"];
-        
+
         // send message to popup.js to update dropdown
         // console.log(language);
         chrome.runtime.sendMessage({
@@ -138,8 +141,11 @@ async function startRecord(option) {
         return;
       }
 
-      if (data["message"] === "DISCONNECT"){
-        chrome.runtime.sendMessage({ action: "toggleCaptureButtons", data: false })        
+      if (data["message"] === "DISCONNECT") {
+        chrome.runtime.sendMessage({
+          action: "toggleCaptureButtons",
+          data: false,
+        });
         return;
       }
 
@@ -149,7 +155,6 @@ async function startRecord(option) {
       });
     };
 
-    
     const audioDataCache = [];
     const context = new AudioContext();
     const mediaStream = context.createMediaStreamSource(stream);

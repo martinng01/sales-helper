@@ -1,4 +1,4 @@
-audio-transcription-test/__pycache__/
+*.pyc
 output.srt
 output.txt
 output_recording.wav
