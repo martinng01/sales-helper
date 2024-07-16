@@ -16,74 +16,79 @@ if eventlet:
     from flask import Flask
     from websocket import WebSocketApp, ABNF
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
-CORS(app)
 
+class MiddlewareServer:
+    def __init__(self, frontend_host='0.0.0.0', frontend_port=8765, backend_url='ws://0.0.0.0:9090'):
+        self.frontend_host = frontend_host
+        self.frontend_port = frontend_port
+        self.backend_url = backend_url
 
-def on_open(ws):
-    print("Connected to WhisperLive", flush=True)
-    uid = str(uuid.uuid4())
-    ws.send(json.dumps(
-        {
+        self.app = Flask(__name__)
+        self.app.config['SECRET_KEY'] = 'secret!'
+        CORS(self.app)
+
+        self.frontend_socket = SocketIO(self.app, cors_allowed_origins="*")
+        self.backend_socket = WebSocketApp(
+            'ws://0.0.0.0:9090',
+            on_open=self.backend_on_open,
+            on_message=self.backend_on_message,
+            on_error=self.backend_on_error
+        )
+
+        self.setup_frontend_routes()
+
+    def setup_frontend_routes(self):
+        @self.frontend_socket.on('connect')
+        def handle_connect():
+            print("New client connected", flush=True)
+
+        @self.frontend_socket.on('message event')
+        def handle_message_from_process_text_file(message):
+            print(message, flush=True)
+            self.frontend_socket.emit('message', message)
+
+        @self.frontend_socket.on('audio')
+        def on_audio_chunk(data):
+            try:
+                if self.backend_socket.sock and self.backend_socket.sock.connected:
+                    self.backend_socket.send(data, ABNF.OPCODE_BINARY)
+                else:
+                    print("WebSocket connection is closed", flush=True)
+            except Exception as e:
+                print(f"Failed to send data: {e}", flush=True)
+
+    def backend_on_open(self, ws):
+        print("Connected to WhisperLive", flush=True)
+        uid = str(uuid.uuid4())
+        ws.send(json.dumps({
             "uid": uid,
             "language": 'en',
             "task": 'transcribe',
             "model": 'small',
             "use_vad": True
-        }
-    ))
+        }))
 
+    def backend_on_message(self, ws, message):
+        print(message, flush=True)
 
-def on_message(ws, message):
-    print(message, flush=True)
+    def backend_on_error(self, ws, error):
+        print(f"WebSocket error: {error}", flush=True)
 
+    def run(self):
+        frontend_socket_thread = threading.Thread(
+            target=self.frontend_socket.run, kwargs={'app': self.app, 'host': '0.0.0.0', 'port': 8765})
+        frontend_socket_thread.daemon = True
+        frontend_socket_thread.start()
 
-frontend_socket = SocketIO(app, cors_allowed_origins="*")
-whisperlive_socket = WebSocketApp(
-    "ws://0.0.0.0:9090", on_open=lambda ws: on_open(ws), on_message=lambda ws, message: on_message(ws, message), on_error=lambda ws, error: print(error))
+        backend_socket_thread = threading.Thread(
+            target=self.backend_socket.run_forever)
+        backend_socket_thread.daemon = True
+        backend_socket_thread.start()
 
-
-@frontend_socket.on('connect')
-def handle_connect():
-    print("New client connected", flush=True)
-
-
-@frontend_socket.on('message event')
-def handle_message_from_process_text_file(message):
-    print(message)
-    frontend_socket.emit('message', message)
-
-
-@frontend_socket.on('audio')  # TODO: not receiving audio
-def on_audio_chunk(data):
-    try:
-        if whisperlive_socket.sock and whisperlive_socket.sock.connected:
-            whisperlive_socket.send(data, ABNF.OPCODE_BINARY)
-        else:
-            print("WebSocket connection is closed", flush=True)
-    except Exception as e:
-        print(f"Failed to send data: {e}", flush=True)
-
-
-# @frontend_socket.on('disconnect')
-# def handle_disconnect():
-#     global thread_stop_event
-#     thread_stop_event.set()
-#     print("Client disconnected")
+        frontend_socket_thread.join()
+        backend_socket_thread.join()
 
 
 if __name__ == '__main__':
-    frontend_socket_thread = threading.Thread(
-        target=frontend_socket.run, kwargs={'app': app, 'host': '0.0.0.0', 'port': 8765})
-    frontend_socket_thread.daemon = True
-    frontend_socket_thread.start()
-    # frontend_socket.run(app, host='0.0.0.0', port=8765)
-
-    whisperlive_socket_thread = threading.Thread(
-        target=whisperlive_socket.run_forever)
-    whisperlive_socket_thread.daemon = True
-    whisperlive_socket_thread.start()
-
-    frontend_socket_thread.join()
-    whisperlive_socket_thread.join()
+    server = MiddlewareServer()
+    server.run()
