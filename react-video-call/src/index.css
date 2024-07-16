@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.str-video {
+  height: 100dvh;
+}
+
+.str-video__participant-view {
+  max-width: none;
+}

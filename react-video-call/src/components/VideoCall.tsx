@@ -12,7 +12,8 @@ import {
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useEffect } from "react";
-import { io } from "socket.io-client";
+import resampleTo16kHZ from "../utils/audio";
+import { socket } from "../socket";
 
 // Remember to update the API key and token values because it changes every day.
 const apiKey = "ta4p357cjet3";
@@ -31,10 +32,8 @@ const client = new StreamVideoClient({ apiKey, user, token });
 const call = client.call("default", callId);
 await call.join({ create: true });
 
-export default function VideoCall() {
+const VideoCall = () => {
   useEffect(() => {
-    const socket = io("ws://0.0.0.0:8765");
-
     const getMediaStream = async () => {
       const audioDataCache = [];
       const context = new AudioContext();
@@ -60,31 +59,23 @@ export default function VideoCall() {
     };
 
     getMediaStream();
-  });
+  }, []);
 
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
-        <MyUILayout />
+        <StreamLayout />
       </StreamCall>
     </StreamVideo>
   );
-}
+};
 
-export const MyParticipantList = (props: {
+export const ParticipantList = (props: {
   participants: StreamVideoParticipant[];
 }) => {
   const { participants } = props;
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        gap: "8px",
-        height: "100vh",
-        width: "100vw",
-      }}
-    >
+    <div className="flex flex-row h-full w-full gap-2">
       {participants.map((participant) => {
         return (
           <ParticipantView
@@ -97,7 +88,7 @@ export const MyParticipantList = (props: {
   );
 };
 
-export const MyFloatingLocalParticipant = (props: {
+const FloatingLocalParticipant = (props: {
   participant?: StreamVideoParticipant;
 }) => {
   const { participant } = props;
@@ -118,7 +109,7 @@ export const MyFloatingLocalParticipant = (props: {
   );
 };
 
-export const MyUILayout = () => {
+const StreamLayout = () => {
   const { useCallCallingState, useLocalParticipant, useRemoteParticipants } =
     useCallStateHooks();
 
@@ -132,43 +123,10 @@ export const MyUILayout = () => {
 
   return (
     <StreamTheme>
-      <MyParticipantList participants={remoteParticipants} />
-      <MyFloatingLocalParticipant participant={localParticipant} />
+      <ParticipantList participants={remoteParticipants} />
+      <FloatingLocalParticipant participant={localParticipant} />
     </StreamTheme>
   );
 };
 
-/**
- * Resamples the audio data to a target sample rate of 16kHz.
- * @param {Array|ArrayBuffer|TypedArray} audioData - The input audio data.
- * @param {number} [origSampleRate=44100] - The original sample rate of the audio data.
- * @returns {Float32Array} The resampled audio data at 16kHz.
- */
-function resampleTo16kHZ(audioData: Float32Array, origSampleRate = 44100) {
-  // Convert the audio data to a Float32Array
-  const data = new Float32Array(audioData);
-
-  // Calculate the desired length of the resampled data
-  const targetLength = Math.round(data.length * (16000 / origSampleRate));
-
-  // Create a new Float32Array for the resampled data
-  const resampledData = new Float32Array(targetLength);
-
-  // Calculate the spring factor and initialize the first and last values
-  const springFactor = (data.length - 1) / (targetLength - 1);
-  resampledData[0] = data[0];
-  resampledData[targetLength - 1] = data[data.length - 1];
-
-  // Resample the audio data
-  for (let i = 1; i < targetLength - 1; i++) {
-    const index = i * springFactor;
-    const leftIndex = Math.floor(index);
-    const rightIndex = Math.ceil(index);
-    const fraction = index - leftIndex;
-    resampledData[i] =
-      data[leftIndex] + (data[rightIndex] - data[leftIndex]) * fraction;
-  }
-
-  // Return the resampled data
-  return resampledData;
-}
+export default VideoCall;
