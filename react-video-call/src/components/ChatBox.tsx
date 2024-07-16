@@ -19,20 +19,13 @@ const ChatBox = () => {
       setMessages([...messages, message]);
     };
 
-    socket.on("connect", () => {
-      console.log("Connected to WebSocket Server");
-    });
-
+    //TODO: Segments?
     socket.on("segments", (data) => {
       const message: MessageType = {
         id: Math.random(),
         text: data.message,
       };
       addMessage(message);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from WebSocket Server");
     });
   }, [messages]);
 
