@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { RxCross1 } from "react-icons/rx";
+import {
+  IoClose,
+  IoThumbsUpOutline,
+  IoThumbsDownOutline,
+} from "react-icons/io5";
 import { socket } from "../socket";
 
 interface MessageType {
@@ -8,7 +12,13 @@ interface MessageType {
 }
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([
+    {
+      id: 1,
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+    },
+    { id: 2, text: "I'm here to help you with your queries." },
+  ]);
 
   const deleteMessage = (id: number) => {
     setMessages(messages.filter((message) => message.id !== id));
@@ -52,15 +62,25 @@ const ChatMessage = ({
   deleteMessage: (id: number) => void;
 }) => {
   return (
-    <div key={message.id} className="relative">
-      <button
-        onClick={() => deleteMessage(message.id)}
-        className="absolute top-0 right-0 m-2 p-1 text-grey-700 hover:text-red-700"
-      >
-        <RxCross1 />
-      </button>
-      <div className="p-4 mb-4 bg-white rounded-lg shadow-md">
+    <div className="mb-4 bg-white rounded-lg shadow-md" key={message.id}>
+      <div className="flex justify-end p-1 pb-0">
+        <button
+          onClick={() => deleteMessage(message.id)}
+          className="p-1 text-grey-700 hover:text-red-700 hover:bg-gray-200 rounded"
+        >
+          <IoClose size={25} />
+        </button>
+      </div>
+      <div className="px-4 pb-3">
         <p style={{ overflowWrap: "anywhere" }}>{message.text}</p>
+        <div className="flex space-x-2 mt-2">
+          <button className="p-1 text-green-700 hover:text-green-700 hover:bg-gray-200 rounded">
+            <IoThumbsUpOutline size={20} />
+          </button>
+          <button className="p-1 text-red-700 hover:text-red-700 hover:bg-gray-200 rounded">
+            <IoThumbsDownOutline size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );
