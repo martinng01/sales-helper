@@ -42,13 +42,11 @@ class MiddlewareServer:
         def handle_connect():
             print("New client connected", flush=True)
 
-        @self.frontend_socket.on('message event')
-        def handle_message_from_process_text_file(message):
-            print(message, flush=True)
-            self.frontend_socket.emit('message', message)
-
         @self.frontend_socket.on('audio')
         def on_audio_chunk(data):
+            """
+            Receives audio data from the front-end and forwards it to the WhisperLive backend.
+            """
             try:
                 if self.backend_socket.sock and self.backend_socket.sock.connected:
                     self.backend_socket.send(data, ABNF.OPCODE_BINARY)
@@ -58,10 +56,13 @@ class MiddlewareServer:
                 print(f"Failed to send data: {e}", flush=True)
 
     def backend_on_open(self, ws):
+        """
+        Sets up a client connection to the WhisperLive backend.
+        """
+
         print("Connected to WhisperLive", flush=True)
-        uid = str(uuid.uuid4())
         ws.send(json.dumps({
-            "uid": uid,
+            "uid": str(uuid.uuid4()),
             "language": 'en',
             "task": 'transcribe',
             "model": 'small',
@@ -69,7 +70,12 @@ class MiddlewareServer:
         }))
 
     def backend_on_message(self, ws, message):
+        """
+        Receives messages from the WhisperLive backend and forwards them to the front-end.
+        """
+
         print(message, flush=True)
+        self.frontend_socket.emit('transcript', message)
 
     def backend_on_error(self, ws, error):
         print(f"WebSocket error: {error}", flush=True)
