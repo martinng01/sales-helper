@@ -73,9 +73,16 @@ class MiddlewareServer:
         """
         Receives messages from the WhisperLive backend and forwards them to the front-end.
         """
-
-        print(message, flush=True)
-        self.frontend_socket.emit('transcript', message)
+        text = ''
+        message_json = json.loads(message)
+        if 'message' in message_json:
+            print(message_json['message'])
+        elif 'segments' in message_json:
+            for segment in json.loads(message)['segments']:
+                text += segment['text']
+            self.frontend_socket.emit('transcript', text)
+        else:
+            print(message_json)
 
     def backend_on_error(self, ws, error):
         print(f"WebSocket error: {error}", flush=True)

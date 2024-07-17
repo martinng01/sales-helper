@@ -11,9 +11,8 @@ const Transcript = () => {
   );
 
   useEffect(() => {
-    socket.on("transcript", (data) => {
-      console.log(data);
-      setTranscript(data.transcript);
+    socket.on("transcript", (text) => {
+      setTranscript(text);
     });
   }, []);
 
