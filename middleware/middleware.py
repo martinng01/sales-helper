@@ -18,11 +18,7 @@ if eventlet:
 
 
 class MiddlewareServer:
-    def __init__(self, frontend_host='0.0.0.0', frontend_port=8765, backend_url='ws://0.0.0.0:9090'):
-        self.frontend_host = frontend_host
-        self.frontend_port = frontend_port
-        self.backend_url = backend_url
-
+    def __init__(self):
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = 'secret!'
         CORS(self.app)
