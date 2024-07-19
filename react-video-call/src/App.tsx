@@ -22,7 +22,7 @@ const App = () => {
           <VideoCall />
           <Transcript />
         </div>
-        <div className="col-span-1 bg-white p-2 flex flex-col items-center shadow-lg h-full">
+        <div className="col-span-1 bg-white p-2 flex flex-col items-center shadow-lg h-screen">
           <h1 className="text-3xl font-bold mb-2 border-b-2">Bot Insights</h1>
           <ChatBox />
         </div>

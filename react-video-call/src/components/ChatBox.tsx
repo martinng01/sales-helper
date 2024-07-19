@@ -18,6 +18,14 @@ const ChatBox = () => {
       text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
     },
     { id: 2, text: "I'm here to help you with your queries." },
+    {
+      id: 3,
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+    },
+    {
+      id: 4,
+      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+    },
   ]);
 
   const deleteMessage = (id: number) => {
@@ -39,8 +47,8 @@ const ChatBox = () => {
   }, [messages]);
 
   return (
-    <div className="bg-blue-50 rounded-lg shadow-lg p-3 flex h-full w-full flex-col">
-      <div className="flex-1 overflow-y-auto mb-4">
+    <div className="bg-blue-50 rounded-lg shadow-lg p-3 flex h-full w-full flex-col h-full overflow-y-auto">
+      <div className="flex-1  mb-4">
         {messages.map((message) => (
           <ChatMessage
             key={message.id}
