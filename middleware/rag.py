@@ -68,7 +68,3 @@ class RAG:
 
         return self.db.as_retriever(
             search_type="similarity", search_kwargs={"k": k}).invoke(query)
-
-
-rag = RAG()
-print(rag.rag('How to advertise on TikTok?'))

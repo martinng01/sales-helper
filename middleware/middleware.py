@@ -9,8 +9,10 @@ import threading
 import eventlet
 import uuid
 
+
 if eventlet:
     eventlet.monkey_patch()
+    from transcript_processor import TranscriptProcessor
     from flask_cors import CORS
     from flask_socketio import SocketIO
     from flask import Flask
@@ -33,6 +35,8 @@ class MiddlewareServer:
 
         self.setup_frontend_routes()
 
+        self.transcript_processor = TranscriptProcessor(self.frontend_socket)
+
     def setup_frontend_routes(self):
         @self.frontend_socket.on('connect')
         def handle_connect():
@@ -43,13 +47,8 @@ class MiddlewareServer:
             """
             Receives audio data from the front-end and forwards it to the WhisperLive backend.
             """
-            try:
-                if self.backend_socket.sock and self.backend_socket.sock.connected:
-                    self.backend_socket.send(data, ABNF.OPCODE_BINARY)
-                else:
-                    print("WebSocket connection is closed", flush=True)
-            except Exception as e:
-                print(f"Failed to send data: {e}", flush=True)
+            if self.backend_socket.sock and self.backend_socket.sock.connected:
+                self.backend_socket.send(data, ABNF.OPCODE_BINARY)
 
     def backend_on_open(self, ws):
         """
@@ -69,14 +68,15 @@ class MiddlewareServer:
         """
         Receives messages from the WhisperLive backend and forwards them to the front-end.
         """
-        text = ''
         message_json = json.loads(message)
         if 'message' in message_json:
             print(message_json['message'])
         elif 'segments' in message_json:
+            text = ''
             for segment in json.loads(message)['segments']:
                 text += segment['text']
             self.frontend_socket.emit('transcript', text)
+            self.transcript_processor.add_transcript(text)
         else:
             print(message_json)
 

@@ -29,11 +29,10 @@ const ChatBox = () => {
       setMessages([...messages, message]);
     };
 
-    //TODO: Segments?
-    socket.on("segments", (data) => {
+    socket.on("rag", (data) => {
       const message: MessageType = {
         id: Math.random(),
-        text: data.message,
+        text: data,
       };
       addMessage(message);
     });
