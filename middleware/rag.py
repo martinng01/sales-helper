@@ -17,7 +17,7 @@ class RAG:
             collection_name='ads',
             embedding_function=HuggingFaceEmbeddings(
                 model_name='all-MiniLM-L6-v2'),
-            persist_directory='middleware/chroma_db'
+            persist_directory='middleware/vectordb/chroma_db'
         )
 
     def rag(self, transcript):
