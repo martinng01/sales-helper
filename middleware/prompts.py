@@ -3,19 +3,9 @@ RAG_PROMPT = (
     '---------------------\n'
     '{context_str}\n'
     '---------------------\n'
-    'Given the context information and not prior knowledge, answer the query.\n'
-    'Query: {query_str}\n'
-    'Answer: '
-)
-
-RAG_PROMPT_2 = (
-    'Context information is below.'
-    '---------------------\n'
-    '{context_str}\n'
-    '---------------------\n'
     'This is a portion of an audio transcript query from a client asking about Tiktok Ads.\n'
     'Given the context information and not prior knowledge, reply the transcript.\n'
-    'Keep the response SIMPLE.\n'
+    'Keep the response SIMPLE and below 40 words.\n'
     'Transcript: {query_str}\n'
     'Answer: '
 )

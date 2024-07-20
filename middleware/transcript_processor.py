@@ -16,6 +16,7 @@ class TranscriptProcessor:
         self.frontend_socket = frontend_socket
         self.rag = RAG()
         self.memory = collections.deque()
+        self.prev_doc = None
         self.topics_db = Chroma(
             collection_name='topics',
             embedding_function=HuggingFaceEmbeddings(
@@ -53,10 +54,15 @@ class TranscriptProcessor:
                 sentence, k=1)[0]
             print(f'sentence={sentence}, score={score}')
 
+            # If the similarity score is below the threshold, skip
             if score < threshold:
                 return
 
-            # result = self.rag.rag(doc.page_content)
+            # If question to be answered is the same as the previous one, skip
+            if self.prev_doc and doc == self.prev_doc:
+                continue
+            self.prev_doc = doc
+
             result = self.rag.rag(sentence)
             self.frontend_socket.emit('rag', json.dumps({
                 'id': str(uuid.uuid4()),
