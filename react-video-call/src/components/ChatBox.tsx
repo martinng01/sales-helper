@@ -48,7 +48,7 @@ const ChatBox = () => {
 
   return (
     <div className="bg-blue-50 rounded-lg shadow-lg p-3 flex h-full w-full flex-col h-full overflow-y-auto">
-      <div className="flex-1  mb-4">
+      <div className="flex-1 flex flex-col-reverse mb-4">
         {messages.map((message) => (
           <ChatMessage
             key={message.id}
