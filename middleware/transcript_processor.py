@@ -1,6 +1,8 @@
 import collections
+import json
 import queue
 import threading
+import uuid
 
 from flask_socketio import SocketIO
 from langchain_chroma import Chroma
@@ -54,8 +56,13 @@ class TranscriptProcessor:
             if score < threshold:
                 return
 
-            result = self.rag.rag(doc.page_content)
-            self.frontend_socket.emit('rag', result)
+            # result = self.rag.rag(doc.page_content)
+            result = self.rag.rag(sentence)
+            self.frontend_socket.emit('rag', json.dumps({
+                'id': str(uuid.uuid4()),
+                'text': result,
+                'transcript': sentence
+            }))
 
     def add_transcript(self, transcript):
         """

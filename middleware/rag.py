@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from openai import OpenAI
-from prompts import RAG_PROMPT, QUESTION_PROMPT
+from prompts import RAG_PROMPT, QUESTION_PROMPT, RAG_PROMPT_2
 
 load_dotenv(override=True)
 
@@ -30,7 +30,7 @@ class RAG:
         question = self.transcript_to_question(transcript)
         docs = self.retrieve_documents(question, k)
 
-        prompt = RAG_PROMPT.format(
+        prompt = RAG_PROMPT_2.format(
             context_str='\n'.join([doc.page_content for doc in docs]),
             query_str=question
         )

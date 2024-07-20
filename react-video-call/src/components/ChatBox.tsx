@@ -10,10 +10,13 @@ import { AnimatePresence, motion } from "framer-motion";
 interface MessageType {
   id: number;
   text: string;
+  transcript?: string;
 }
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([
+    { id: 1, text: "Hello", transcript: "Hello" },
+  ]);
 
   const deleteMessage = (id: number) => {
     setMessages(messages.filter((message) => message.id !== id));
@@ -25,10 +28,8 @@ const ChatBox = () => {
     };
 
     socket.on("rag", (data) => {
-      const message: MessageType = {
-        id: Math.random(),
-        text: data,
-      };
+      const message = JSON.parse(data) as MessageType;
+
       addMessage(message);
     });
   }, [messages]);
@@ -77,6 +78,9 @@ const ChatMessage = ({
       </div>
       <div className="px-4 pb-3">
         <p style={{ overflowWrap: "anywhere" }}>{message.text}</p>
+        <p className="text-gray-500 text-xs italic pt-1">
+          {message.transcript}
+        </p>
         <div className="flex space-x-2 mt-2">
           <button className="p-1 text-green-700 hover:text-green-700 hover:bg-gray-200 rounded">
             <IoThumbsUpOutline size={20} />
