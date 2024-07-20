@@ -5,6 +5,7 @@ import {
   IoThumbsDownOutline,
 } from "react-icons/io5";
 import { socket } from "../socket";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface MessageType {
   id: number;
@@ -12,21 +13,7 @@ interface MessageType {
 }
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState<MessageType[]>([
-    {
-      id: 1,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
-    },
-    { id: 2, text: "I'm here to help you with your queries." },
-    {
-      id: 3,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
-    },
-    {
-      id: 4,
-      text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
-    },
-  ]);
+  const [messages, setMessages] = useState<MessageType[]>([]);
 
   const deleteMessage = (id: number) => {
     setMessages(messages.filter((message) => message.id !== id));
@@ -48,15 +35,25 @@ const ChatBox = () => {
 
   return (
     <div className="bg-blue-50 rounded-lg shadow-lg p-3 flex h-full w-full flex-col h-full overflow-y-auto">
-      <div className="flex-1 flex flex-col-reverse mb-4">
-        {messages.map((message) => (
-          <ChatMessage
-            key={message.id}
-            message={message}
-            deleteMessage={deleteMessage}
-          />
-        ))}
-      </div>
+      <motion.ul
+        layout
+        layoutId={"list"}
+        className="flex-1 flex flex-col-reverse justify-end mb-4"
+      >
+        <AnimatePresence>
+          {messages.map((message) => (
+            <motion.li
+              initial={{ x: -50, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -50, opacity: 0 }}
+              key={message.id}
+              layout
+            >
+              <ChatMessage message={message} deleteMessage={deleteMessage} />
+            </motion.li>
+          ))}
+        </AnimatePresence>
+      </motion.ul>
     </div>
   );
 };
