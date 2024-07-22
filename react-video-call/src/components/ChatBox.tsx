@@ -14,7 +14,9 @@ interface MessageType {
 }
 
 const ChatBox = () => {
-  const [messages, setMessages] = useState<MessageType[]>([]);
+  const [messages, setMessages] = useState<MessageType[]>([
+    { id: 1, text: "Hello, how can I help you?" },
+  ]);
 
   const deleteMessage = (id: number) => {
     setMessages(messages.filter((message) => message.id !== id));

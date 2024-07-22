@@ -5,6 +5,7 @@ Handles data transformation. RAG.
 """
 
 import json
+from multiprocessing import Process
 import threading
 import eventlet
 import uuid
@@ -12,6 +13,7 @@ import uuid
 
 if eventlet:
     eventlet.monkey_patch()
+    from detect_emotion import EmotionDetector
     from transcript_processor import TranscriptProcessor
     from flask_cors import CORS
     from flask_socketio import SocketIO
@@ -25,7 +27,8 @@ class MiddlewareServer:
         self.app.config['SECRET_KEY'] = 'secret!'
         CORS(self.app)
 
-        self.frontend_socket = SocketIO(self.app, cors_allowed_origins="*")
+        self.frontend_socket = SocketIO(
+            self.app, cors_allowed_origins="*")
         self.backend_socket = WebSocketApp(
             'ws://0.0.0.0:9090',
             on_open=self.backend_on_open,
@@ -36,6 +39,9 @@ class MiddlewareServer:
         self.setup_frontend_routes()
 
         self.transcript_processor = TranscriptProcessor(self.frontend_socket)
+        self.emotion_detector = EmotionDetector(self.frontend_socket)
+
+        self.emotion_detector.start_detection_thread()
 
     def setup_frontend_routes(self):
         @self.frontend_socket.on('connect')
@@ -49,6 +55,13 @@ class MiddlewareServer:
             """
             if self.backend_socket.sock and self.backend_socket.sock.connected:
                 self.backend_socket.send(data, ABNF.OPCODE_BINARY)
+
+        @self.frontend_socket.on('video')
+        def on_video_chunk(data):
+            """
+            Receives video data from the front-end and forwards it to emotion detection.
+            """
+            print(data)
 
     def backend_on_open(self, ws):
         """
@@ -93,6 +106,9 @@ class MiddlewareServer:
             target=self.backend_socket.run_forever)
         backend_socket_thread.daemon = True
         backend_socket_thread.start()
+
+        frontend_socket_thread.join()
+        backend_socket_thread.join()
 
         frontend_socket_thread.join()
         backend_socket_thread.join()

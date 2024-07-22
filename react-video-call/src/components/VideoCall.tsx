@@ -60,7 +60,6 @@ const VideoCall = () => {
 
     getMediaStream();
   }, []);
-
   return (
     <StreamVideo client={client}>
       <StreamCall call={call}>
@@ -92,6 +91,7 @@ const FloatingLocalParticipant = (props: {
   participant?: StreamVideoParticipant;
 }) => {
   const { participant } = props;
+
   return (
     <div
       style={{
