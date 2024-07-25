@@ -2,7 +2,11 @@
 
 Originally a project submitted for TikTok Techjam 2024, I continued the development of the project and added more features.
 
-Original project [here](https://github.com/joseyjh/sales-helper-hackathon).
+Original project [here](https://github.com/joseyjh/sales-helper-hackathon), which was built on top of [WhisperLive](https://github.com/collabora/WhisperLive), a nearly-live implementation of OpenAI's Whisper.
+
+## Demo
+
+VIDEO HERE
 
 ## Project Overview
 
@@ -10,74 +14,82 @@ This project is designed to assist sales teams by leveraging customer relationsh
 
 ## Features
 
-- Smart Sales Helper: Using AI to provide actionable insights and recommendations for sales strategies.
-- Sales Optimization: Helps in optimizing sales operations by analyzing data and predicting trends.
+- 📹 Live Video Conferencing 
+- 😊 Emotion Detection 
+- 📝 Real-Time Transcription 
+- 🔍 Live Automatic Information Retrieval 
 
-### Development Tools
+## Technologies
 
-- React: A JavaScript library for building user interfaces, particularly single-page applications where you can create reusable UI components.
-- Tailwind CSS: A utility-first CSS framework for rapidly building custom user interfaces.
-- [getstream.io](https://getstream.io)
-- [socket.io](https://socket.io)
-- [python-socketio](https://python-socketio.readthedocs.io/en/stable/)
-- [OpenAI](https://openai.com/index/openai-api/)
+The project was created with:
 
-### APIs
+- Frontend
+  - React
+  - Vite
+  - Tailwind CSS
+  - [getstream.io](https://getstream.io)
+  - [socket.io](https://socket.io)
 
-- React: Used to build the user interface components and manage the state of the application.
-- Tailwind CSS: Used for styling the application efficiently with its utility-first approach.
-- [getstream.io](https://getstream.io): Used to build the video calling application.
-- [socket.io](https://socket.io): Provides APIs to create websocket clients and servers to enable two way communication betwen different modules in our codebase, for NodeJS.
-- [python-socketio](https://python-socketio.readthedocs.io/en/stable/): For python.
-- [OpenAI](https://openai.com/index/openai-api/)
-- [Qdrant](https://qdrant.tech/)
+- Application Server
+  - Flask
+  - WebSockets
+  - LangChain
+  - ChromaDB
+  - OpenAI
+  - OpenCV
 
-### Assets
+## Getting Started
 
-- No external assets were used in this project.
+Run the following commands to run this application on your local machine.
 
-### Libraries Used
+### Clone this Respository
 
-- React: For building the user interface.
-- Tailwind CSS: For styling the application.
-- Axios: For making HTTP requests to interact with the backend.
-- [getstream.io](https://getstream.io)
-- [socket.io](https://socket.io)
-- [python-socketio](https://python-socketio.readthedocs.io/en/stable/)
-- [OpenAI](https://openai.com/index/openai-api/)
-- [WhisperLive](https://github.com/collabora/WhisperLive) : Implementation of faster-whisper.
-- [BeautifulSoup4](https://tedboy.github.io/bs4_doc/)
-- [Qdrant](https://qdrant.tech/)
+```bash
+git clone https://github.com/martinng01/sales-helper.git
+```
 
-### Problem Statement
+### Setting Up the Environment
 
-Sales teams use customer relationship management (CRM) systems to help manage their daily tasks throughout the end-to-end sales processes. The challenge is to provide smart sales helper functionalities that leverage ML and AI models to enable managerial insights, optimize sales strategies, and streamline operations and management activities. This project aims to address this problem by integrating advanced analytical tools and intelligent recommendations into the CRM workflow.
+Set up the Anaconda environment with **Python 3.11.9**
 
-### Data Flow
+```bash
+conda create -n sales-helper python==3.11.9
+conda activate sales-helper
+pip install -r requirements.txt
+```
 
-1️⃣ Faster-Whisper: WhisperLive  
-We utilized the WhisperLive library in order to implement the ASR component of our solution.
+Install npm dependencies
+```bash
+cd react-video-call
+npm install
+```
 
-2️⃣ Initial Filtering Process  
-A filter was created using openAI to see if the transcriptions coming in were worth of query to the vector database. If transcripts passed the filter, then the transcriptions would be refined further into a more concise query, again using the openAI model.
+### Running the Application
 
-3️⃣ Retrieval Augmentation Generation (RAG)
+Run all 3 code blocks in **different** terminal windows from the base directory:
 
-- We web scraped a few raw html pages from the Tiktok Business Center using BeautifulSoup4 and then used OpenAI to restructure the page into text format.
-- We vectorized each text using the openAI model and then loaded the embeddings into a vector database. We selected Qdrant to be our vector database for this project.
-- Once the vectorized pages were loaded, we added the retrieval into our pipeline to fetch the nearest vector result, and used OpenAI to restructure the prompt based on the live transcriptions that were coming in through the ASR.
-- To ensure queries were complete, we used openAI to complete or refine any incomplete or incoherent sentences to form a short query.
-- Once a transcription passes the filtering process, the query is vectorized and then we fetch the nearest result. The result returned is then provided as context to OpenAI to then craft a relevant technical tip that could help the salesperson.
+- Frontend
+```bash
+cd react-video-call
+npm run dev
+```
 
-4️⃣ Saleshelper Bot Insight
-The generation is then pushed to the front end to aid the client-facing user as an insight.
+- Application Server
+```bash
+python middleware/middleware.py
+```
 
-### Solution Architecture Diagram:
+- Transcription Server
+```bash
+python WhisperLive/run_server.py
+```
 
-#### General Flow
+Visit the localhost website in the frontend terminal window.
 
-![RAG2](images/RAG2.jpg)
+## Documentation
 
-#### RAG Flow
+### Architecture
+![architecture](docs/images/saleshelper.jpg)
 
-![RAG1](images/RAG1.jpg)
+### Retrieval Augmented Generation (RAG) Engine
+![rag](docs/images/rag.jpg)

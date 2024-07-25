@@ -6,10 +6,13 @@ ffmpeg==1.4
 Flask==3.0.3
 flask_cors==4.0.1
 flask_socketio==5.3.6
+mediapipe==0.10.14
 nltk==3.8.1
 numpy==1.26.4
 onnxruntime==1.16.0
 openai==1.35.14
+opencv-contrib-python==4.10.0.84
+opencv-python==4.10.0.84
 pyaudio==0.2.14
 python-dotenv==1.0.1
 python-socketio==5.11.3
