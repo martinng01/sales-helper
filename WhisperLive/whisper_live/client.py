@@ -11,7 +11,6 @@ import uuid
 import time
 import ffmpeg
 import whisper_live.utils as utils
-from .process_text import TranscriptProcessor
 
 
 class Client:
@@ -57,7 +56,6 @@ class Client:
         self.use_vad = use_vad
         self.last_segment = None
         self.last_received_segment = None
-        self.transcript_processor = TranscriptProcessor()
 
         if translate:
             self.task = "translate"
@@ -120,9 +118,6 @@ class Client:
         if self.last_received_segment is None or self.last_received_segment != segments[-1]["text"]:
             self.last_response_received = time.time()
             self.last_received_segment = segments[-1]["text"]
-
-        if self.transcript:
-            self.transcript_processor.process_transcripts(self.transcript)
 
     def on_message(self, ws, message):
         """

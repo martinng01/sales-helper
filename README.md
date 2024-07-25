@@ -1,8 +1,14 @@
+# TikTok Sales Helper
+
+Originally a project submitted for TikTok Techjam 2024, I continued the development of the project and added more features.
+
+Original project [here](https://github.com/joseyjh/sales-helper-hackathon).
+
 ## Project Overview
 
 This project is designed to assist sales teams by leveraging customer relationship management (CRM) systems to streamline their daily workflows throughout the end-to-end sales processes. By integrating artificial intelligence (AI) models, the project aims to provide smart sales helper functionalities that enable managerial insights and optimize sales strategies.
 
-### Features and Functionality
+## Features
 
 - Smart Sales Helper: Using AI to provide actionable insights and recommendations for sales strategies.
 - Sales Optimization: Helps in optimizing sales operations by analyzing data and predicting trends.
@@ -15,7 +21,6 @@ This project is designed to assist sales teams by leveraging customer relationsh
 - [socket.io](https://socket.io)
 - [python-socketio](https://python-socketio.readthedocs.io/en/stable/)
 - [OpenAI](https://openai.com/index/openai-api/)
-
 
 ### APIs
 
@@ -44,20 +49,20 @@ This project is designed to assist sales teams by leveraging customer relationsh
 - [BeautifulSoup4](https://tedboy.github.io/bs4_doc/)
 - [Qdrant](https://qdrant.tech/)
 
-
 ### Problem Statement
 
 Sales teams use customer relationship management (CRM) systems to help manage their daily tasks throughout the end-to-end sales processes. The challenge is to provide smart sales helper functionalities that leverage ML and AI models to enable managerial insights, optimize sales strategies, and streamline operations and management activities. This project aims to address this problem by integrating advanced analytical tools and intelligent recommendations into the CRM workflow.
 
-###  Data Flow
+### Data Flow
 
 1️⃣ Faster-Whisper: WhisperLive  
-We utilized the WhisperLive library in order to implement the ASR component of our solution. 
+We utilized the WhisperLive library in order to implement the ASR component of our solution.
 
 2️⃣ Initial Filtering Process  
 A filter was created using openAI to see if the transcriptions coming in were worth of query to the vector database. If transcripts passed the filter, then the transcriptions would be refined further into a more concise query, again using the openAI model.
 
-3️⃣ Retrieval Augmentation Generation (RAG) 
+3️⃣ Retrieval Augmentation Generation (RAG)
+
 - We web scraped a few raw html pages from the Tiktok Business Center using BeautifulSoup4 and then used OpenAI to restructure the page into text format.
 - We vectorized each text using the openAI model and then loaded the embeddings into a vector database. We selected Qdrant to be our vector database for this project.
 - Once the vectorized pages were loaded, we added the retrieval into our pipeline to fetch the nearest vector result, and used OpenAI to restructure the prompt based on the live transcriptions that were coming in through the ASR.
@@ -70,7 +75,9 @@ The generation is then pushed to the front end to aid the client-facing user as 
 ### Solution Architecture Diagram:
 
 #### General Flow
+
 ![RAG2](images/RAG2.jpg)
 
 #### RAG Flow
+
 ![RAG1](images/RAG1.jpg)
