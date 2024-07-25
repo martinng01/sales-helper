@@ -12,14 +12,18 @@ VIDEO HERE
 
 This project is designed to assist sales teams by leveraging customer relationship management (CRM) systems to streamline their daily workflows throughout the end-to-end sales processes. By integrating artificial intelligence (AI) models, the project aims to provide smart sales helper functionalities that enable managerial insights and optimize sales strategies.
 
-## Features
+### Features
 
 - 📹 Live Video Conferencing 
+  - Implemented using [getstream.io](https://getstream.io)
 - 😊 Emotion Detection 
+  - Trained a Random Forest Classification algorithm from scratch using a [synthesized facial dataset](https://osf.io/7a5fs/). Facial landmarks were generated using [Mediapipe](https://github.com/google-ai-edge/mediapipe) and fed into the model. For inference, a frame of the video is sent at a fixed interval to the model for emotion detection.
 - 📝 Real-Time Transcription 
+  - Implemented using [WhisperLive](https://github.com/collabora/WhisperLive)
 - 🔍 Live Automatic Information Retrieval 
+  - Implemented using LangChain, more details in the implementation section
 
-## Technologies
+### Technologies
 
 The project was created with:
 
@@ -86,7 +90,7 @@ python WhisperLive/run_server.py
 
 Visit the localhost website in the frontend terminal window.
 
-## Documentation
+## Implementation
 
 ### Architecture
 ![architecture](docs/images/saleshelper.jpg)
