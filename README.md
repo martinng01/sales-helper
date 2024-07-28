@@ -10,24 +10,25 @@ VIDEO HERE
 
 ## Project Overview
 
-This project is designed to assist sales teams by leveraging customer relationship management (CRM) systems to streamline their daily workflows throughout the end-to-end sales processes. By integrating artificial intelligence (AI) models, the project aims to provide smart sales helper functionalities that enable managerial insights and optimize sales strategies.
+This video calling web application aids sales representatives by providing real-time, accurate data about their services and leveraging AI to optimize sales strategies. It integrates live video conferencing, emotion detection, and automatic information retrieval to enhance the efficiency and effectiveness of sales interactions.
 
 ### Features
 
-- 📹 Live Video Conferencing 
+- 📹 Live Video Conferencing
   - Implemented using [getstream.io](https://getstream.io)
-- 😊 Emotion Detection 
+- 😊 Emotion Detection
   - Trained a Random Forest Classification algorithm from scratch using a [synthesized facial dataset](https://osf.io/7a5fs/). Facial landmarks were generated using [Mediapipe](https://github.com/google-ai-edge/mediapipe) and fed into the model. For inference, a frame of the video is sent at a fixed interval to the model for emotion detection.
-- 📝 Real-Time Transcription 
+- 📝 Real-Time Transcription
   - Implemented using [WhisperLive](https://github.com/collabora/WhisperLive)
-- 🔍 Live Automatic Information Retrieval 
-  - Implemented using LangChain, more details in the implementation section
+- 🔍 Live Automatic Information Retrieval
+  - Implemented using [ChromaDB](https://www.trychroma.com/), more details in the implementation section
 
 ### Technologies
 
 The project was created with:
 
 - Frontend
+
   - React
   - Vite
   - Tailwind CSS
@@ -37,8 +38,7 @@ The project was created with:
 - Application Server
   - Flask
   - WebSockets
-  - LangChain
-  - ChromaDB
+  - [ChromaDB](https://www.trychroma.com/)
   - OpenAI
   - OpenCV
 
@@ -63,6 +63,7 @@ pip install -r requirements.txt
 ```
 
 Install npm dependencies
+
 ```bash
 cd react-video-call
 npm install
@@ -73,27 +74,36 @@ npm install
 Run all 3 code blocks in **different** terminal windows from the base directory:
 
 - Frontend
+
 ```bash
 cd react-video-call
 npm run dev
 ```
 
 - Application Server
+
 ```bash
 python middleware/middleware.py
 ```
 
 - Transcription Server
+
 ```bash
 python WhisperLive/run_server.py
 ```
 
 Visit the localhost website in the frontend terminal window.
 
+## Possible Improvements
+
+- [ ] Enable audio and video to be received from the other client (Currently audio and video is received from user's side for proof of concept.)
+
 ## Implementation
 
 ### Architecture
+
 ![architecture](docs/images/saleshelper.jpg)
 
 ### Retrieval Augmented Generation (RAG) Engine
+
 ![rag](docs/images/rag.jpg)
