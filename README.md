@@ -8,6 +8,10 @@ Original project [here](https://github.com/joseyjh/sales-helper-hackathon), whic
 
 VIDEO HERE
 
+### Emotion Detection
+
+![emotion detection](docs/images/emotion.gif)
+
 ## Project Overview
 
 This video calling web application aids sales representatives by providing real-time, accurate data about their services and leveraging AI to optimize sales strategies. It integrates live video conferencing, emotion detection, and automatic information retrieval to enhance the efficiency and effectiveness of sales interactions.
