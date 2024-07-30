@@ -6,7 +6,7 @@ Original project [here](https://github.com/joseyjh/sales-helper-hackathon), whic
 
 ## Demo
 
-<video controls src="docs/images/demo.mp4" title="Demo"></video>
+https://github.com/user-attachments/assets/adf01023-7481-45b4-a70e-b57c1c684a3b
 
 ### Emotion Detection
 
